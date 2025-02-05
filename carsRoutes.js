@@ -1,30 +1,46 @@
 import { Router } from "express";
 const router = Router();
-import { getCarById, getAllCars, addCar, deleteCar } from "./database";
+import { getById, addCar, deleteCar } from "./database";
 
-// Отримати всі авто
 router.get("/", async (req, res) => {
-  const cars = await getAllCars();
-  res.json(cars);
+  try {
+    const cars = await getById("cars", "*");
+    res.json(cars);
+  }
+  catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
-// Отримати авто за ID
 router.get("/:id", async (req, res) => {
-  const car = await getCarById(req.params.id);
-  res.json(car);
+  try {
+    const car = await getById("cars", req.params.id);
+    res.json(car);
+  }
+  catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
-// Додати авто
 router.post("/", async (req, res) => {
-  const { make, model, year } = req.body;
-  await addCar(make, model, year);
-  res.json({ message: "Car added" });
+  try {
+    const { make, model, year } = req.body;
+    await addCar(make, model, year);
+    res.json({ message: "Car added" });
+  }
+  catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
-// Видалити авто
 router.delete("/:id", async (req, res) => {
-  await deleteCar(req.params.id);
-  res.json({ message: "Car deleted" });
+  try {
+    await deleteCar(req.params.id);
+    res.json({ message: "Car deleted" });
+  }
+  catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 export default router;
